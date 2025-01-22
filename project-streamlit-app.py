@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
 
 # Load the pre-trained model and column names (ensure these files are saved during training)
 model = joblib.load(open("model_project.pkl", "rb"))
 column_names = joblib.load(open("model_columns.pkl", "rb"))
 
-
+# Assuming you have a preprocessed dataset in a pickle file (or you can embed the data directly)
+# Load the preprocessed data
+df = joblib.load('preprocessed_data.pkl')  # Load from a pickle file or use direct embedding
 
 # Title of the Streamlit app
 st.title("HDB Resale Price Prediction")
@@ -18,12 +19,12 @@ st.sidebar.header("Input Features")
 # Input fields for user interaction
 flat_type = st.sidebar.selectbox(
     "Flat Type",
-    options=column_names["flat_type"].unique()
+    options=df["flat_type"].unique()
 )
 
 flat_model = st.sidebar.selectbox(
     "Flat Model",
-    options=column_names["flat_model"].unique()
+    options=df["flat_model"].unique()
 )
 
 floor_area_sqm = st.sidebar.slider(
@@ -42,7 +43,7 @@ house_age = st.sidebar.slider(
 
 transport_type = st.sidebar.selectbox(
     "Transport Type",
-    options=column_names["transport_type"].unique()
+    options=df["transport_type"].unique()
 )
 
 price_per_sqft = st.sidebar.slider(
@@ -81,4 +82,3 @@ prediction = model.predict(input_df_encoded)
 # Display the predicted resale price
 st.subheader("Predicted Resale Price")
 st.write(f"SGD {prediction[0]:,.2f}")
-
