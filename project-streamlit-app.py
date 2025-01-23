@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the pre-trained model and column names (ensure these files are saved during training)
 model = joblib.load(open("model_project.pkl", "rb"))
@@ -15,23 +17,53 @@ st.title("HDB Resale Price Prediction")
 # Define region to transport mapping
 region_to_transport = {
     "NORTH-EAST REGION": {
-        "MRT": ["Sengkang", "Punggol", "Hougang", "Kovan", "Serangoon"],
-        "LRT": ["Sengkang", "Compassvale", "Rumbia", "Bakau", "Kangkar", "Ranggung", "Cheng Lim", "Farmway", "Kupang", "Thanggam", "Fernvale", "Layar", "Tongkang", "Renjong","Punggol", "Cove", "Meridian", "Coral Edge", "Riviera", "Kadaloor", "Oasis", "Damai", "Sam Kee", "Teck Lee", "Punggol Point", "Samudera", "Nibong", "Sumang", "Soo Teck"]
+        "MRT": [
+            "Ang Mo Kio", "Bartley", "Bright Hill", "Buangkok", "Hougang", "Kovan", "Lentor", 
+            "Lorong Chuan", "Mayflower", "Punggol", "Sengkang", "Serangoon", "Yio Chu Kang"
+        ],
+        "LRT": [
+            "Bakau", "Cheng Lim", "Compassvale", "Coral Edge", "Cove", "Damai", "Farmway", 
+            "Fernvale", "Kadaloor", "Kangkar", "Kupang", "Layar", "Meridian", "Nibong", "Oasis", 
+            "Punggol", "Ranggung", "Riviera", "Rumbia", "Sengkang", "Soo Teck", "Sumang", 
+            "Thanggam", "Tongkang"
+        ]
     },
     "NORTH REGION": {
-        "MRT": ["Yishun", "Khatib", "Sembawang", "Admiralty", "Woodlands"],
+        "MRT": [
+            "Admiralty", "Canberra", "Khatib", "Marsiling", "Sembawang", "Woodlands", 
+            "Woodlands North", "Woodlands South", "Yishun"
+        ],
         "LRT": []
     },
     "EAST REGION": {
-        "MRT": ["Tampines", "Bedok", "Pasir Ris", "Expo", "Simei", "Tanah Merah"],
+        "MRT": [
+            "Bedok", "Bedok North", "Bedok Reservoir", "Changi Airport", "Kaki Bukit", "Kembangan", 
+            "Pasir Ris", "Simei", "Tampines", "Tampines East", "Tampines West", "Tanah Merah", "Ubi", 
+            "Upper Changi"
+        ],
         "LRT": []
     },
     "WEST REGION": {
-        "MRT": ["Jurong East", "Bukit Batok", "Clementi", "Choa Chu Kang", "Bukit Panjang", "Boon Lay", "Lakeside", "Joo Koon", "Pioneer"],
-        "LRT": ["Choa Chu Kang", "South View", "Keat Hong", "Teck Whye", "Phoenix", "Bukit Panjang", "Petir", "Pending", "Bangkit", "Fajar", "Segar", "Jelapang", "Senja", "Ten Mile Junction"]
+        "MRT": [
+            "Boon Lay", "Bukit Batok", "Bukit Gombak", "Bukit Panjang", "Chinese Garden", "Chao Chu Kang", 
+            "Clementi", "Dover", "Jurong East", "Lakeside", "Pioneer", "Yew Tee"
+        ],
+        "LRT": [
+            "Boon Lay", "Bukit Batok", "Bukit Gombak", "Bukit Panjang", "Chinese Garden", "Chao Chu Kang", 
+            "Clementi", "Dover", "Jurong East", "Lakeside", "Pioneer", "Yew Tee"
+        ]
     },
     "CENTRAL REGION": {
-        "MRT": ["Dhoby Ghaut", "City Hall", "Orchard", "Raffles Place", "Bugis", "Clarke Quay", "Chinatown", "Little India", "Novena", "Somerset", "Bras Basah", "Marina Bay", "Tanjong Pagar", "Outram Park", "Telok Blangah"],
+        "MRT": [
+            "Aljunied", "Ang Mo Kio", "Bartley", "Beauty World", "Bencoolen", "Bendemeer", "Bishan", 
+            "Boon Keng", "Braddell", "Bras Basah", "Bright Hill", "Bugis", "Buona Vista", "Caldecott", 
+            "Chinatown", "Commonwealth", "Dakota", "Dover", "Eunos", "Farrer Park", "Farrer Road", 
+            "Geylang Bahru", "Great World", "Harbourfront", "Havelock", "Holland Village", "Jalan Besar", 
+            "Kallang", "Kembangan", "Labrador Park", "Lavender", "Little India", "MacPherson", "Marymount", 
+            "Matter", "Maxwell", "Mountbatten", "Nicoll Highway", "Novena", "One-North", "Outram Park", 
+            "Paya Lebar", "Potong Pasir", "Queenstown", "Redhill", "Rochor", "Tai Seng", "Tanjong Pagar", 
+            "Telok Blangah", "Tiong Bahru", "Toa Payoh", "Ubi", "Upper Thomson", "Woodleigh"
+        ],
         "LRT": []
     }
 }
@@ -39,7 +71,7 @@ region_to_transport = {
 # Sidebar for user input
 st.sidebar.header("Input Features")
 
-# Input fields for user interaction
+# Input fields for user interaction (same as your current code)
 flat_type = st.sidebar.selectbox(
     "Flat Type",
     options=df["flat_type"].unique()
@@ -133,3 +165,37 @@ prediction = model.predict(input_df_encoded)
 # Display the predicted resale price
 st.subheader("Predicted Resale Price")
 st.write(f"SGD {prediction[0]:,.2f}")
+
+# Extract feature importances from the model
+feature_importances = model.feature_importances_
+
+# Create a DataFrame to store the feature importances
+feature_importance_df = pd.DataFrame({
+    'Feature': column_names,
+    'Importance': feature_importances
+})
+
+simplified_importance = {
+    'Region Ura': feature_importance_df[feature_importance_df['Feature'].str.contains('region_ura')]['Importance'].sum(),
+    'Transport Type': feature_importance_df[feature_importance_df['Feature'].str.contains('transport_type')]['Importance'].sum(),
+    'MRT&LRT Station': feature_importance_df[feature_importance_df['Feature'].str.contains('closest_mrt_station')]['Importance'].sum(),
+    'Flat Type': feature_importance_df[feature_importance_df['Feature'].str.contains('flat_type')]['Importance'].sum(),
+    'Flat Model': feature_importance_df[feature_importance_df['Feature'].str.contains('flat_model')]['Importance'].sum(),
+    'Floor Area (sqm)': feature_importance_df[feature_importance_df['Feature'] == 'floor_area_sqm']['Importance'].values[0],
+    'House Age': feature_importance_df[feature_importance_df['Feature'] == 'house_age']['Importance'].values[0],
+    'Price Per Sqft': feature_importance_df[feature_importance_df['Feature'] == 'price_per_sqft']['Importance'].values[0]
+}
+
+# Convert to a DataFrame for plotting
+simplified_importance_df = pd.DataFrame(list(simplified_importance.items()), columns=['Feature', 'Importance'])
+
+# Plot the feature importance
+st.subheader("Feature Importance (Simplified)")
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Importance', y='Feature', data=simplified_importance_df, palette='viridis')
+plt.title("Feature Importance")
+st.pyplot(plt)
+
+# Display the feature importance table
+st.subheader("Feature Importance Table")
+st.write(simplified_importance_df)
