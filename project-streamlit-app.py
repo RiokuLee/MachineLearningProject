@@ -16,22 +16,22 @@ st.markdown(
 
     /* Add text shadow to regular text content */
     .css-1d391kg {  /* For regular text content */
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
     }
 
     /* Add text shadow to titles and subheaders */
     .css-1u6dpbm {  /* For titles/subheaders */
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
     }
 
     /* Add text shadow to data table content */
     .stDataFrame {  /* For tables */
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
     }
 
     /* Optional: Add shadow to headers */
     h1, h2, h3 {
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
     }
     </style>
     """, unsafe_allow_html=True
