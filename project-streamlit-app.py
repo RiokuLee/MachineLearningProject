@@ -4,8 +4,40 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url('https://img.tepcdn.com/img-style/simplecrop_article/83444555.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+
+    /* Add text shadow to regular text content */
+    .css-1d391kg {  /* For regular text content */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Add text shadow to titles and subheaders */
+    .css-1u6dpbm {  /* For titles/subheaders */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Add text shadow to data table content */
+    .stDataFrame {  /* For tables */
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Optional: Add shadow to headers */
+    h1, h2, h3 {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
 # Load the pre-trained model and column names (ensure these files are saved during training)
-model = joblib.load(open("model_project.pkl", "rb"))
+model = joblib.load(open("model_gdr.pkl", "rb"))
 column_names = joblib.load(open("model_columns.pkl", "rb"))
 
 # Load the preprocessed data
